@@ -11,8 +11,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AssessmentViewModel
-@Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<QuizState>(QuizRepository.quiz.value)
+@Inject constructor(
+    private val quizRepository: QuizRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<QuizState>(quizRepository.quiz.value)
     val uiState: StateFlow<QuizState> = _uiState.asStateFlow()
 
     fun onPageChange(page: Int) {

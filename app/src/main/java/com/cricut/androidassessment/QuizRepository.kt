@@ -7,35 +7,44 @@ import com.cricut.androidassessment.model.QuizState
 import com.cricut.androidassessment.model.TrueFalseQuestion
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object QuizRepository {
+@Singleton
+class QuizRepository @Inject constructor() {
     private val _quizState = MutableStateFlow(QuizState())
     val quiz: StateFlow<QuizState> = _quizState
 
     init {
+        populate()
+    }
+
+    private fun populate() {
         _quizState.value = QuizState(
             questions = listOf(
                 TrueFalseQuestion(
-                    question = "Jake Wharton is a programmer.",
+                    questionText = "Jake Wharton is a programmer.",
                 ),
                 MultipleChoiceQuestion(
-                    question = "What is the best programming language?",
+                    questionText = "What is the best programming language?",
                     choices = listOf(
                         "Java",
                         "Kotlin",
                         "Swift",
+                        "Objective-C",
                     ),
                 ),
                 MultipleSelectionQuestion(
-                    question = "What programming languages do you like?",
+                    questionText = "What programming languages do you like?",
                     choices = listOf(
                         "Java",
                         "Kotlin",
                         "Swift",
+                        "Objective-C",
                     ),
                 ),
                 OpenEndedQuestion(
-                    question = "What language features in Kotlin do you like best?",
+                    questionText = "What language features in Kotlin do you like best?",
                 ),
             ),
         )
