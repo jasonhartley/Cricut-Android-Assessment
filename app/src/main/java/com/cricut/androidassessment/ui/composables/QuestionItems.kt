@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -20,6 +20,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.capitalize
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import com.cricut.androidassessment.model.MultipleChoiceQuestion
 import com.cricut.androidassessment.model.MultipleSelectionQuestion
@@ -29,29 +31,38 @@ import com.cricut.androidassessment.model.TrueFalseQuestion
 @Composable
 fun TrueFalseQuestionItem(
     question: TrueFalseQuestion,
+    modifier: Modifier = Modifier,
     onAnswerSelected: (Boolean?) -> Unit = {},
 ) {
     TrueFalseQuestionItem(
         questionText = question.questionText,
-        onAnswerSelected = onAnswerSelected
+        onAnswerSelected = onAnswerSelected,
+        modifier = modifier,
     )
 }
 
 @Composable
 fun TrueFalseQuestionItem(
     questionText: String,
-    onAnswerSelected: (Boolean?) -> Unit,
+    modifier: Modifier = Modifier,
+    onAnswerSelected: (Boolean?) -> Unit = {},
 ) {
     val choices: List<Boolean?> = listOf(true, false, null)
     var selectedAnswer: Boolean? by rememberSaveable { mutableStateOf(null) }
 
     Column {
-        Text(text = questionText)
+        Text(
+            text = questionText,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+        )
         choices.forEach { choice ->
             if (choice == null) return@forEach
 
             Row(
-                modifier = Modifier
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier
                     .fillMaxWidth()
                     .selectable(
                         selected = (choice == selectedAnswer),
@@ -61,7 +72,6 @@ fun TrueFalseQuestionItem(
                         }
                     )
                     .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = (choice == selectedAnswer),
@@ -71,7 +81,8 @@ fun TrueFalseQuestionItem(
                     }
                 )
                 Text(
-                    text = choice.toString(),
+                    text = choice.toString().capitalize(Locale.current),
+                    style = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
@@ -87,7 +98,7 @@ fun MultipleChoiceQuestionItem(
     MultipleChoiceQuestionItem(
         questionText = question.questionText,
         choices = question.choices,
-        onAnswerSelected = onAnswerSelected
+        onAnswerSelected = onAnswerSelected,
     )
 }
 
@@ -100,9 +111,15 @@ fun MultipleChoiceQuestionItem(
     var selectedAnswer by rememberSaveable { mutableStateOf("") }
 
     Column {
-        Text(text = questionText)
+        Text(
+            text = questionText,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+        )
         choices.forEach { choice ->
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
                     .selectable(
@@ -113,7 +130,6 @@ fun MultipleChoiceQuestionItem(
                         }
                     )
                     .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = (choice == selectedAnswer),
@@ -139,7 +155,7 @@ fun MultipleSelectionQuestionItem(
     MultipleSelectionQuestionItem(
         questionText = question.questionText,
         choices = question.choices,
-        onAnswerSelected = onAnswerSelected
+        onAnswerSelected = onAnswerSelected,
     )
 }
 
@@ -152,13 +168,18 @@ fun MultipleSelectionQuestionItem(
     var selectedAnswers = rememberMutableStateListOf<String>()
 
     Column {
-        Text(text = questionText)
+        Text(
+            text = questionText,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+        )
         choices.forEach { choice ->
             Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
                     text = choice,
@@ -187,7 +208,7 @@ fun OpenEndedQuestionItem(
 ) {
     OpenEndedQuestionItem(
         questionText = question.questionText,
-        onAnswerSelected = onAnswerSelected
+        onAnswerSelected = onAnswerSelected,
     )
 }
 
@@ -196,23 +217,30 @@ fun OpenEndedQuestionItem(
     questionText: String,
     onAnswerSelected: (String) -> Unit = {},
 ) {
-    var answer by remember { mutableStateOf("") }
+    var answer by rememberSaveable { mutableStateOf("") }
 
     Column {
-        Text(text = questionText)
+        Text(
+            text = questionText,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+        )
         OutlinedTextField(
             value = answer,
             onValueChange = { newText ->
                 answer = newText
+                onAnswerSelected(newText)
             },
         )
     }
 }
 
 @Composable
-fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> = rememberSaveable(
-    saver = listSaver(
-        save = { it.toList() },
-        restore = { it.toMutableStateList() }
-    )
-) { elements.toList().toMutableStateList() }
+fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> =
+    rememberSaveable(
+        saver = listSaver(
+            save = { it.toList() },
+            restore = { it.toMutableStateList() },
+        )
+    ) { elements.toList().toMutableStateList() }

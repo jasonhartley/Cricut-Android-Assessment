@@ -10,6 +10,11 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+// Likely features to add to this class:
+// - fetch questions from a remote server
+// - store questions in a database or DataStore
+// - fetch correct answers from a remote server
+
 @Singleton
 class QuizRepository @Inject constructor() {
     private val _quizState = MutableStateFlow(QuizState())

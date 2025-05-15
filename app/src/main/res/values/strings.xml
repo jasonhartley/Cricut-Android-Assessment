@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">AndroidAssessment</string>
+    <string name="summary">summary</string>
+    <string name="questions_total">questions total</string>
+    <string name="questions_answered">questions answered</string>
+    <string name="questions_not_answered">questions not answered</string>
+    <string name="submit">submit</string>
 </resources>
